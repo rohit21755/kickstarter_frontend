@@ -1,95 +1,59 @@
+"use client";
 import Image from "next/image";
 import styles from "./page.module.css";
-
+import instance from "../../factory";
+import { useEffect, useState } from "react";
+import { CardGroup } from 'semantic-ui-react'
+import { Button, Icon,Header, Container } from 'semantic-ui-react'
 export default function Home() {
+  const [campaigns, setCampaigns] = useState([]);
+  useEffect(() => {
+    const getCampaigns = async () => {
+      const campaigns = await instance.methods.getDeployedCampaigns().call();
+      console.log(campaigns);
+      setCampaigns(campaigns);
+    };
+    getCampaigns();
+  }, []);
+  function renderCampaigns() {
+    const items = campaigns.map((address) => {
+      return {
+        header: address,
+        description: <a href={`/createcamp/${address}`}>View Campaign</a>,
+        fluid: true,
+      };
+    });
+    return <CardGroup items={items} />;
+  }
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <>
+    <Container >
+     <Header as='h3' block style={{marginTop: '10px'}}>
+    Block Header
+  </Header>
+    <main style={{
+      display: "flex",
+      // justifyContent: "space-between",
+      gap: "1rem",
+      alignItems: "",
+      
+    }}>
+    <div className={styles.main}>
+      {renderCampaigns()}
+    </div>
+    <div style={{
+      padding: '6rem',
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+    }}>
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+      <Button icon labelPosition='left' primary href="/createcamp">
+      <Icon name='plus circle' />
+      Add Campaign
+    </Button>
+    </div>
     </main>
+    </Container>
+    </>
   );
 }
